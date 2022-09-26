@@ -10,15 +10,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Product struct {
+type Products struct {
 	l *log.Logger
 }
 
-func NewProducts(l *log.Logger) *Product {
-	return &Product{l}
+func NewProducts(l *log.Logger) *Products {
+	return &Products{l}
 }
 
-func (p Product) GetProducts(rw http.ResponseWriter, r *http.Request) {
+func (p Products) GetProducts(rw http.ResponseWriter, r *http.Request) {
 	lp := data.GetProducts()
 	err := lp.ToJSON(rw)
 	if err != nil {
@@ -26,14 +26,14 @@ func (p Product) GetProducts(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (p Product) AddProduct(rw http.ResponseWriter, r *http.Request) {
+func (p Products) AddProduct(rw http.ResponseWriter, r *http.Request) {
 	p.l.Println("Handle POST Product")
 
 	prod := r.Context().Value(KeyProduct{}).(data.Product)
 	data.AddProduct(&prod)
 }
 
-func (p Product) UpdateProduct(rw http.ResponseWriter, r *http.Request) {
+func (p Products) UpdateProduct(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -58,7 +58,7 @@ func (p Product) UpdateProduct(rw http.ResponseWriter, r *http.Request) {
 
 type KeyProduct struct{}
 
-func (p Product) MiddlewareValidateProduct(next http.Handler) http.Handler {
+func (p Products) MiddlewareValidateProduct(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		prod := data.Product{}
 
